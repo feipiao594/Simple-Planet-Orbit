@@ -131,15 +131,28 @@ def update(val):
 # 鼠标拖动事件
 def on_drag(event):
     global dragging_small_mass, dragging_direction_point
+     # 检查事件数据是否有效
+    if event.xdata is None or event.ydata is None:
+        return  # 无效坐标，忽略事件
     if dragging_small_mass:
-        # 拖动小质量物体
-        small_mass.set_offsets([event.xdata, event.ydata])
-        slider_x0.set_val(event.xdata)
-        slider_y0.set_val(event.ydata)
+        # 获取当前坐标系的范围
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        # 限制坐标在范围内
+        new_x = np.clip(event.xdata, xlim[0], xlim[1])
+        new_y = np.clip(event.ydata, ylim[0], ylim[1])
+        small_mass.set_offsets([new_x, new_y])
+        slider_x0.set_val(new_x)
+        slider_y0.set_val(new_y)
         update(None)
     elif dragging_direction_point:
-        # 拖动方向点
-        direction_point.set_offsets([event.xdata, event.ydata])
+        # 获取当前坐标系的范围
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        # 限制坐标在范围内
+        new_x = np.clip(event.xdata, xlim[0], xlim[1])
+        new_y = np.clip(event.ydata, ylim[0], ylim[1])
+        direction_point.set_offsets([new_x, new_y])
         update(None)
 
 def on_press(event):
