@@ -60,11 +60,9 @@ def draw_velocity_vector(ax, x_pos, y_pos, vx, vy):
 
 # 更新函数
 def update(val):
-    global arrow, direction_point, direction_circle, vx0, vy0
+    global arrow, direction_point, direction_circle, vx0, vy0, x0, y0
     M = slider_M.val
     m = slider_m.val
-    x0 = slider_x0.val
-    y0 = slider_y0.val
     speed = slider_speed.val
 
     k = speed / np.sqrt(vx0**2 + vy0**2)
@@ -142,8 +140,6 @@ def on_drag(event):
         new_x = np.clip(event.xdata, xlim[0], xlim[1])
         new_y = np.clip(event.ydata, ylim[0], ylim[1])
         small_mass.set_offsets([new_x, new_y])
-        slider_x0.set_val(new_x)
-        slider_y0.set_val(new_y)
         update(None)
     elif dragging_direction_point:
         # 获取当前坐标系的范围
@@ -200,7 +196,7 @@ x, y = calculate_orbit(M, m, x0, y0, vx0, vy0, num_points)
 
 # 绘制轨迹和动态标记
 fig, ax = plt.subplots(figsize=(8, 8))
-plt.subplots_adjust(left=0.1, bottom=0.4)
+plt.subplots_adjust(left=0.1, bottom=0.3)
 
 # 绘制轨迹
 line, = ax.plot(x, y, label='Orbit', color='red')
@@ -267,26 +263,20 @@ ax.legend()
 ax.axis('equal')  # 保持比例
 
 # 添加滑块
-ax_theta = plt.axes([0.18, 0.3, 0.65, 0.03])
-ax_M = plt.axes([0.18, 0.25, 0.65, 0.03])
-ax_m = plt.axes([0.18, 0.2, 0.65, 0.03])
-ax_x0 = plt.axes([0.18, 0.15, 0.65, 0.03])
-ax_y0 = plt.axes([0.18, 0.1, 0.65, 0.03])
+ax_theta = plt.axes([0.18, 0.2, 0.65, 0.03])
+ax_M = plt.axes([0.18, 0.15, 0.65, 0.03])
+ax_m = plt.axes([0.18, 0.1, 0.65, 0.03])
 ax_speed = plt.axes([0.18, 0.05, 0.65, 0.03])
 
 slider_theta = Slider(ax_theta, 'Theta', 100, 1000000, valinit=num_points, valstep=100)
 slider_M = Slider(ax_M, 'M', 1e20, 1e26, valinit=M)
 slider_m = Slider(ax_m, 'm', 1e14, 1e24, valinit=m)
-slider_x0 = Slider(ax_x0, 'x0', -500, 500, valinit=x0)
-slider_y0 = Slider(ax_y0, 'y0', -500, 500, valinit=y0)
 slider_speed = Slider(ax_speed, 'Speed', 1e3, 1e7, valinit=speed)
 
 # 绑定滑块更新
 slider_theta.on_changed(update)
 slider_M.on_changed(update)
 slider_m.on_changed(update)
-slider_x0.on_changed(update)
-slider_y0.on_changed(update)
 slider_speed.on_changed(update)
 
 # 绑定鼠标事件
